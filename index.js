@@ -4,6 +4,10 @@ const bodyParser = require("body-parser");
 const app = express();
 app.use(bodyParser.json());
 
+app.get("/", (req, res) => {
+  res.send("welcome to hall-booking");
+});
+
 const data = [
   {
     id: "1",
@@ -59,7 +63,6 @@ const data = [
   },
 ];
 
-
 // 1. Create a room
 app.post("/createRoom", (req, res) => {
   const { numberOfSeats, amenities, price, RoomName } = req.body;
@@ -79,8 +82,6 @@ app.post("/createRoom", (req, res) => {
   });
 });
 
-
-
 // 2. Book a room
 app.post("/bookRoom", (req, res) => {
   const { customerName, date, startTime, endTime, RoomId } = req.body;
@@ -95,14 +96,11 @@ app.post("/bookRoom", (req, res) => {
   );
 
   if (isAlreadyBooked) {
-    return res
-      .status(400)
-      .json({
-        success: false,
-        message: "Room already booked for the given date and time",
-      });
+    return res.status(400).json({
+      success: false,
+      message: "Room already booked for the given date and time",
+    });
   }
-
 
   // Find the room and update booking details
   const room = data.find((room) => room.RoomId === RoomId);
@@ -122,23 +120,17 @@ app.post("/bookRoom", (req, res) => {
   }
 });
 
-
-
 // 3. List all rooms with booked data
 app.get("/listAllRooms", (req, res) => {
   const bookedRooms = data.filter((room) => room.ifBooked);
   res.json(bookedRooms);
 });
 
-
-
 // 4. List all customers with booked data
 app.get("/listAllCustomers", (req, res) => {
   const bookedCustomers = data.filter((room) => room.ifBooked);
   res.json(bookedCustomers);
 });
-
-
 
 // 5. List how many times a customer has booked a room
 app.get("/customerBookingHistory/:customerName", (req, res) => {
@@ -148,7 +140,6 @@ app.get("/customerBookingHistory/:customerName", (req, res) => {
   );
   res.json(customerBookingHistory);
 });
-
 
 // server listen
 const PORT = process.env.PORT || 3000;
